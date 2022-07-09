@@ -48,13 +48,12 @@ namespace LuaELK
 
     int GetRuneState(lua_State* L, Player* player)
     {
-         
+        
         for (uint32 i = 0; i < MAX_RUNES; ++i)
-        {
-            Eluna::Push(L, player->GetCurrentRune(i));
-            Eluna::Push(L, player->GetRuneCooldown(i) / 39.3f); 
+        { 
+            Eluna::Push(L, player->GetRuneCooldown(i)); 
         } 
-        return 0;
+        return MAX_RUNES;
     }
 };
 #endif
