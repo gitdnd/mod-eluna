@@ -736,6 +736,11 @@ public:
     {
         sEluna->OnLearnSpell(player, spellId);
     }
+
+    void OnRuneResync(Player* player) override
+    {
+        sEluna->OnRuneResync(player);
+    }
 };
 
 class Eluna_ServerScript : public ServerScript

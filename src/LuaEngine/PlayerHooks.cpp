@@ -566,3 +566,10 @@ void Eluna::OnLearnSpell(Player* player, uint32 spellId)
     Push(spellId);
     CallAllFunctions(PlayerEventBindings, key);
 }
+
+void Eluna::OnRuneResync(Player* player)
+{
+    START_HOOK(PLAYER_EVENT_ON_RUNE_RESYNC);
+    Push(player);
+    CallAllFunctions(PlayerEventBindings, key);
+}
