@@ -50,10 +50,11 @@ namespace LuaELK
     {
         
         for (uint32 i = 0; i < MAX_RUNES; ++i)
-        { 
-            Eluna::Push(L, player->GetRuneCooldown(i)); 
+        {
+            Eluna::Push(L, player->GetRuneCooldown(i));
+            Eluna::Push(L, player->GetRuneStartCooldown(i));
         } 
-        return MAX_RUNES;
+        return MAX_RUNES * 2;
     }
 };
 #endif
