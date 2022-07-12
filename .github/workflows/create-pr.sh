@@ -7,6 +7,9 @@ export GITHUB_TOKEN=$API_TOKEN_GITHUB
 git config --global user.email "$USER_EMAIL"
 git config --global user.name "$USER_NAME"
 
+date=$(date '+%Y-%m-%d_%H-%M')
+DESTINATION_HEAD_BRANCH="$DESTINATION_HEAD_BRANCH-$date"
+
 echo "Cloning destination git repository"
 git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_REPO.git" "$CLONE_DIR"
 cd "$CLONE_DIR"
