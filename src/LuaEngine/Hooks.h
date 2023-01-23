@@ -208,7 +208,7 @@ namespace Hooks
         PLAYER_EVENT_ON_LEARN_SPELL             =     44,       // (event, player, spellId)
         PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE    =     45,       // (event, player, achievement)
 
-        PLAYER_EVENT_ON_RUNE_RESYNC             =     45,       // (event, player)
+        PLAYER_EVENT_ON_RUNE_RESYNC             =     46,       // (event, player)
 
         PLAYER_EVENT_COUNT
     };

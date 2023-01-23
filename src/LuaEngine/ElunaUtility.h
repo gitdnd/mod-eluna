@@ -101,10 +101,10 @@ namespace ElunaUtil
     class ObjectDistanceOrderPred
     {
     public:
-        ObjectDistanceOrderPred(WorldObject const* pRefObj, bool ascending = true);
-        bool operator()(WorldObject const* pLeft, WorldObject const* pRight) const;
+        ObjectDistanceOrderPred(WorldObject* pRefObj, bool ascending = true);
+        bool operator()(WorldObject* pLeft, WorldObject* pRight) const;
 
-        WorldObject const* m_refObj;
+        WorldObject* m_refObj;
         const bool m_ascending;
     };
 
@@ -112,13 +112,13 @@ namespace ElunaUtil
     class WorldObjectInRangeCheck
     {
     public:
-        WorldObjectInRangeCheck(bool nearest, WorldObject const* obj, float range,
+        WorldObjectInRangeCheck(bool nearest, WorldObject* obj, float range,
             uint16 typeMask = 0, uint32 entry = 0, uint32 hostile = 0, uint32 dead = 0);
-        WorldObject const& GetFocusObject() const;
+        WorldObject& GetFocusObject() const;
         bool operator()(WorldObject* u);
 
-        WorldObject const* const i_obj;
-        Unit const* i_obj_unit;
+        WorldObject* const i_obj;
+        Unit* i_obj_unit;
         FactionTemplateEntry const* i_obj_fact;
         uint32 const i_hostile; // 0 both, 1 hostile, 2 friendly
         uint32 const i_entry;

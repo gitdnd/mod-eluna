@@ -33,15 +33,15 @@ bool ElunaUtil::ObjectGUIDCheck::operator()(WorldObject* object)
     return object->GET_GUID() == _guid;
 }
 
-ElunaUtil::ObjectDistanceOrderPred::ObjectDistanceOrderPred(WorldObject const* pRefObj, bool ascending) : m_refObj(pRefObj), m_ascending(ascending)
+ElunaUtil::ObjectDistanceOrderPred::ObjectDistanceOrderPred(WorldObject* pRefObj, bool ascending) : m_refObj(pRefObj), m_ascending(ascending)
 {
 }
-bool ElunaUtil::ObjectDistanceOrderPred::operator()(WorldObject const* pLeft, WorldObject const* pRight) const
+bool ElunaUtil::ObjectDistanceOrderPred::operator()(WorldObject* pLeft, WorldObject* pRight) const
 {
     return m_ascending ? m_refObj->GetDistanceOrder(pLeft, pRight) : !m_refObj->GetDistanceOrder(pLeft, pRight);
 }
 
-ElunaUtil::WorldObjectInRangeCheck::WorldObjectInRangeCheck(bool nearest, WorldObject const* obj, float range,
+ElunaUtil::WorldObjectInRangeCheck::WorldObjectInRangeCheck(bool nearest, WorldObject* obj, float range,
     uint16 typeMask, uint32 entry, uint32 hostile, uint32 dead) :
     i_obj(obj), i_obj_unit(nullptr), i_obj_fact(nullptr), i_hostile(hostile), i_entry(entry), i_range(range), i_typeMask(typeMask), i_dead(dead), i_nearest(nearest)
 {
@@ -52,7 +52,7 @@ ElunaUtil::WorldObjectInRangeCheck::WorldObjectInRangeCheck(bool nearest, WorldO
     if (!i_obj_unit)
         i_obj_fact = sFactionTemplateStore.LookupEntry(14);
 }
-WorldObject const& ElunaUtil::WorldObjectInRangeCheck::GetFocusObject() const
+WorldObject& ElunaUtil::WorldObjectInRangeCheck::GetFocusObject() const
 {
     return *i_obj;
 }

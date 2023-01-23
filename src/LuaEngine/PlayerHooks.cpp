@@ -567,18 +567,18 @@ void Eluna::OnLearnSpell(Player* player, uint32 spellId)
     CallAllFunctions(PlayerEventBindings, key);
 }
 
-void Eluna::OnRuneResync(Player* player)
-{
-    START_HOOK(PLAYER_EVENT_ON_RUNE_RESYNC);
-    Push(player);
-    
-    CallAllFunctions(PlayerEventBindings, key);
-}
-
 void Eluna::OnAchiComplete(Player* player, AchievementEntry const* achievement)
 {
     START_HOOK(PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE);
     Push(player);
     Push(achievement);
+    CallAllFunctions(PlayerEventBindings, key);
+}
+
+void Eluna::OnRuneResync(Player* player)
+{
+    START_HOOK(PLAYER_EVENT_ON_RUNE_RESYNC);
+    Push(player);
+    
     CallAllFunctions(PlayerEventBindings, key);
 }
