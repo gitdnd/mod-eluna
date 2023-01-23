@@ -381,6 +381,15 @@ void Eluna::OnBindToInstance(Player* pPlayer, Difficulty difficulty, uint32 mapi
     CallAllFunctions(PlayerEventBindings, key);
 }
 
+void Eluna::OnUpdateArea(Player* pPlayer, uint32 oldArea, uint32 newArea)
+{
+    START_HOOK(PLAYER_EVENT_ON_UPDATE_AREA);
+    Push(pPlayer);
+    Push(oldArea);
+    Push(newArea);
+    CallAllFunctions(PlayerEventBindings, key);
+}
+
 void Eluna::OnUpdateZone(Player* pPlayer, uint32 newZone, uint32 newArea)
 {
     START_HOOK(PLAYER_EVENT_ON_UPDATE_ZONE);
@@ -575,6 +584,62 @@ void Eluna::OnAchiComplete(Player* player, AchievementEntry const* achievement)
     CallAllFunctions(PlayerEventBindings, key);
 }
 
+void Eluna::OnFfaPvpStateUpdate(Player* player, bool hasFfaPvp)
+{
+    START_HOOK(PLAYER_EVENT_ON_FFAPVP_CHANGE);
+    Push(player);
+    Push(hasFfaPvp);
+    CallAllFunctions(PlayerEventBindings, key);
+}
+
+bool Eluna::OnCanInitTrade(Player* player, Player* target)
+{
+    START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_CAN_INIT_TRADE, true);
+    Push(player);
+    Push(target);
+    return CallAllFunctionsBool(PlayerEventBindings, key);
+}
+
+bool Eluna::OnCanSendMail(Player* player, ObjectGuid receiverGuid, ObjectGuid mailbox, std::string& subject, std::string& body, uint32 money, uint32 cod, Item* item)
+{
+    START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_CAN_SEND_MAIL, true);
+    Push(player);
+    Push(receiverGuid);
+    Push(mailbox);
+    Push(subject);
+    Push(body);
+    Push(money);
+    Push(cod);
+    Push(item);
+    return CallAllFunctionsBool(PlayerEventBindings, key);
+}
+
+bool Eluna::OnCanJoinLfg(Player* player, uint8 roles, lfg::LfgDungeonSet& dungeons, const std::string& comment)
+{
+    START_HOOK_WITH_RETVAL(PLAYER_EVENT_ON_CAN_JOIN_LFG, true);
+    Push(player);
+    Push(roles);
+
+    lua_newtable(L);
+    int table = lua_gettop(L);
+    uint32 counter = 1;
+    for (uint32 dungeon : dungeons)
+    {
+        Eluna::Push(L, dungeon);
+        lua_rawseti(L, table, counter);
+        ++counter;
+    }
+    lua_settop(L, table);
+    ++push_counter;
+
+    Push(comment);
+    return CallAllFunctionsBool(PlayerEventBindings, key);
+}
+
+    ////////////////
+    // MINE
+    ////////////////
+    
 void Eluna::OnRuneResync(Player* player)
 {
     START_HOOK(PLAYER_EVENT_ON_RUNE_RESYNC);

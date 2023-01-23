@@ -20,6 +20,7 @@
 #include "Weather.h"
 #include "World.h"
 #include "Hooks.h"
+#include "LFG.h"
 #include "ElunaUtility.h"
 #include "HttpManager.h"
 #include <mutex>
@@ -469,12 +470,17 @@ public:
     void OnDelete(uint32 guid);
     void OnSave(Player* pPlayer);
     void OnBindToInstance(Player* pPlayer, Difficulty difficulty, uint32 mapid, bool permanent);
+    void OnUpdateArea(Player* pPlayer, uint32 oldArea, uint32 newArea);
     void OnUpdateZone(Player* pPlayer, uint32 newZone, uint32 newArea);
     void OnMapChanged(Player* pPlayer);
     void HandleGossipSelectOption(Player* pPlayer, uint32 menuId, uint32 sender, uint32 action, const std::string& code);
     void OnLearnSpell(Player* player, uint32 spellId);
     void OnRuneResync(Player* player);
     void OnAchiComplete(Player* player, AchievementEntry const* achievement);
+    void OnFfaPvpStateUpdate(Player* player, bool hasFfaPvp);
+    bool OnCanInitTrade(Player* player, Player* target);
+    bool OnCanSendMail(Player* player, ObjectGuid receiverGuid, ObjectGuid mailbox, std::string& subject, std::string& body, uint32 money, uint32 cod, Item* item);
+    bool OnCanJoinLfg(Player* player, uint8 roles, lfg::LfgDungeonSet& dungeons, const std::string& comment);
 
 #ifndef CLASSIC
 #ifndef TBC

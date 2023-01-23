@@ -13,6 +13,9 @@
 
 #include "BanMgr.h"
 #include "GameTime.h"
+#include "SharedDefines.h"
+#include "OutdoorPvPMgr.h"
+#include "../../../../src/server/scripts/OutdoorPvP/OutdoorPvPNA.h"
 
 enum BanMode
 {
@@ -318,6 +321,13 @@ namespace LuaGlobalFunctions
     {
         uint32 lowguid = Eluna::CHECKVAL<uint32>(L, 1);
         Eluna::Push(L, MAKE_NEW_GUID(lowguid, 0, HIGHGUID_ITEM));
+        return 1;
+    }
+
+    int GetItemTemplate(lua_State* L)
+    {
+        uint32 entry = Eluna::CHECKVAL<uint32>(L, 1);
+        Eluna::Push(L, eObjectMgr->GetItemTemplate(entry));
         return 1;
     }
 
@@ -708,6 +718,11 @@ namespace LuaGlobalFunctions
      *     PLAYER_EVENT_ON_PET_ADDED_TO_WORLD      =     43,       // (event, player, pet)
      *     PLAYER_EVENT_ON_LEARN_SPELL             =     44,       // (event, player, spellId)
      *     PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE    =     45,       // (event, player, achievement)
+     *     PLAYER_EVENT_ON_FFAPVP_CHANGE           =     46,       // (event, player, hasFfaPvp)
+     *     PLAYER_EVENT_ON_UPDATE_AREA             =     47,       // (event, player, oldArea, newArea)
+     *     PLAYER_EVENT_ON_CAN_INIT_TRADE          =     48,       // (event, player, target) - Can return false to prevent the trade
+     *     PLAYER_EVENT_ON_CAN_SEND_MAIL           =     49,       // (event, player, receiverGuid, mailbox, subject, body, money, cod, item) - Can return false to prevent sending the mail
+     *     PLAYER_EVENT_ON_CAN_JOIN_LFG            =     50,       // (event, player, roles, dungeons, comment) - Can return false to prevent queueing
      * };
      * </pre>
      *
@@ -1227,7 +1242,12 @@ namespace LuaGlobalFunctions
     {
         const char* command = Eluna::CHECKVAL<const char*>(L, 1);
 #if defined TRINITY || AZEROTHCORE
-        eWorld->QueueCliCommand(new CliCommandHolder(nullptr, command, nullptr, nullptr));
+        eWorld->QueueCliCommand(new CliCommandHolder(nullptr, command, [](void*, std::string_view view)
+        {
+            std::string str = { view.begin(), view.end() };
+            str.erase(std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), str.end()); // Remove trailing spaces and line breaks
+            ELUNA_LOG_INFO("{}", str);
+        }, nullptr));
 #elif defined MANGOS
         eWorld->QueueCliCommand(new CliCommandHolder(0, SEC_CONSOLE, nullptr, command, nullptr, nullptr));
 #endif
@@ -3320,5 +3340,58 @@ namespace LuaGlobalFunctions
 
         return 0;
     }
+
+    #ifdef AZEROTHCORE
+    /**
+     * Gets the faction which is the current owner of Halaa in Nagrand
+     * 0 = Alliance
+     * 1 = Horde
+     *
+     * 600 = slider max Alliance
+     * -600 = slider max Horde
+     *
+     * @return int16 the ID of the team to own Halaa
+     * @return float the slider position.
+     */
+    int GetOwnerHalaa(lua_State* L)
+    {
+        OutdoorPvPNA* nagrandPvp = (OutdoorPvPNA*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(3518);
+        OPvPCapturePointNA* halaa = nagrandPvp->GetCapturePoint();
+        Eluna::Push(L, halaa->GetControllingFaction());
+        Eluna::Push(L, halaa->GetSlider());
+
+        return 2;
+    }
+
+    /**
+     * Sets the owner of Halaa in Nagrand to the respective faction
+     * 0 = Alliance
+     * 1 = Horde
+     *
+     * @param uint16 teamId : the ID of the team to own Halaa
+     */
+    int SetOwnerHalaa(lua_State* L)
+    {
+        uint16 teamId = Eluna::CHECKVAL<uint16>(L, 1);
+
+        OutdoorPvPNA* nagrandPvp = (OutdoorPvPNA*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(3518);
+        OPvPCapturePointNA* halaa = nagrandPvp->GetCapturePoint();
+
+        if (teamId == 0)
+        {
+            halaa->SetSlider(599);
+        }
+        else if (teamId == 1)
+        {
+            halaa->SetSlider(-599);
+        }
+        else
+        {
+            return luaL_argerror(L, 1, "0 for Alliance or 1 for Horde expected");
+        }
+
+        return 0;
+    }
+    #endif
 }
 #endif

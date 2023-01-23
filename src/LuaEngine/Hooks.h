@@ -145,7 +145,7 @@ namespace Hooks
 
         // AddOns
         ADDON_EVENT_ON_MESSAGE                  =     30,       // (event, sender, type, prefix, msg, target) - target can be nil/whisper_target/guild/group/channel. Can return false
-        
+
         WORLD_EVENT_ON_DELETE_CREATURE          =     31,       // (event, creature)
         WORLD_EVENT_ON_DELETE_GAMEOBJECT        =     32,       // (event, gameobject)
 
@@ -207,6 +207,11 @@ namespace Hooks
         PLAYER_EVENT_ON_PET_ADDED_TO_WORLD      =     43,       // (event, player, pet)
         PLAYER_EVENT_ON_LEARN_SPELL             =     44,       // (event, player, spellId)
         PLAYER_EVENT_ON_ACHIEVEMENT_COMPLETE    =     45,       // (event, player, achievement)
+        PLAYER_EVENT_ON_FFAPVP_CHANGE           =     46,       // (event, player, hasFfaPvp)
+        PLAYER_EVENT_ON_UPDATE_AREA             =     47,       // (event, player, oldArea, newArea)
+        PLAYER_EVENT_ON_CAN_INIT_TRADE          =     48,       // (event, player, target) - Can return false to prevent the trade
+        PLAYER_EVENT_ON_CAN_SEND_MAIL           =     49,       // (event, player, receiverGuid, mailbox, subject, body, money, cod, item) - Can return false to prevent sending the mail
+        PLAYER_EVENT_ON_CAN_JOIN_LFG            =     50,       // (event, player, roles, dungeons, comment) - Can return false to prevent queueing
 
         PLAYER_EVENT_ON_RUNE_RESYNC             =     46,       // (event, player)
 
