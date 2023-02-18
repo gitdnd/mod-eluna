@@ -39,7 +39,7 @@ namespace LuaELK
             if (find == player->GetTalentMap().end())
                 return 1;
             auto str = std::to_string(find->second->development) + "." + std::to_string(talentId);
-            Eluna::Push(L, str); 
+            Eluna::Push(L, str);
             return 1;
         }
 
@@ -55,6 +55,27 @@ namespace LuaELK
             Eluna::Push(L, player->GetRuneStartCooldown(i));
         } 
         return MAX_RUNES * 2;
+    }
+
+    int WarforgeItems(lua_State* L, Player* player)
+    {
+        Item* itemMain = player->GetItemByPos(Eluna::CHECKVAL<int>(L, 1, true), Eluna::CHECKVAL<int>(L, 2, true));
+        if (itemMain)
+        {
+            for (uint8 i = 1; i < 3; i++)
+            {
+                uint8 bag = Eluna::CHECKVAL<int>(L, i * 2 + 1, true);
+                uint8 slot = Eluna::CHECKVAL<int>(L, i * 2 + 2, true);
+                Item* itemSacrifice = player->GetItemByPos(bag, slot);
+                if (itemSacrifice && itemSacrifice->GetEntry() == itemMain->GetEntry())
+                {
+                    player->RemoveItem(bag, slot, true);
+                    itemMain->ModLvlBonus(1);
+                }
+            }
+            return 1;
+        }
+        return 0;
     }
 };
 #endif

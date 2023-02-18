@@ -460,6 +460,7 @@ ElunaRegister<Player> PlayerMethods[] =
     { "DevelopTalent", &LuaELK::DevelopTalent },
     { "GetTalentDevelopment", &LuaELK::GetTalentDevelopment },
     { "GetRuneState", &LuaELK::GetRuneState },
+    { "WarforgeItems", &LuaELK::WarforgeItems },
 
     // Getters
     { "GetSelection", &LuaPlayer::GetSelection },
