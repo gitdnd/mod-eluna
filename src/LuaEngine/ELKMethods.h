@@ -59,21 +59,52 @@ namespace LuaELK
 
     int WarforgeItems(lua_State* L, Player* player)
     {
-        Item* itemMain = player->GetItemByPos(Eluna::CHECKVAL<int>(L, 1, true), Eluna::CHECKVAL<int>(L, 2, true));
+        int bagMain = Eluna::CHECKVAL<int>(L, 2, true) + INVENTORY_SLOT_BAG_START - 1;
+        int slotMain = Eluna::CHECKVAL<int>(L, 3, true) - 1;
+        if (bagMain == INVENTORY_SLOT_BAG_START - 1)
+        {
+            bagMain = 255;
+            slotMain += INVENTORY_SLOT_ITEM_START;
+        }
+        Item* itemMain = player->GetItemByPos(bagMain, slotMain);
         if (itemMain)
         {
-            for (uint8 i = 1; i < 3; i++)
+            if (itemMain->GetLvlBonus() >= 300)
+                return 0;
+            ItemTemplate const* templateMain = itemMain->GetTemplate();
+            if (templateMain->Class == ITEM_CLASS_ARMOR || templateMain->Class == ITEM_CLASS_WEAPON)
             {
-                uint8 bag = Eluna::CHECKVAL<int>(L, i * 2 + 1, true);
-                uint8 slot = Eluna::CHECKVAL<int>(L, i * 2 + 2, true);
-                Item* itemSacrifice = player->GetItemByPos(bag, slot);
-                if (itemSacrifice && itemSacrifice->GetEntry() == itemMain->GetEntry())
+                for (uint8 i = 1; i <= 3; i++)
                 {
-                    player->RemoveItem(bag, slot, true);
-                    itemMain->ModLvlBonus(1);
+                    int bag = Eluna::CHECKVAL<int>(L, i * 2 + 2, true) + INVENTORY_SLOT_BAG_START - 1;
+                    int slot = Eluna::CHECKVAL<int>(L, i * 2 + 3, true) - 1;
+                    if (bag == INVENTORY_SLOT_BAG_START - 1)
+                    {
+                        bag = 255;
+                        slot += INVENTORY_SLOT_ITEM_START;
+                    }
+                    Item* itemSacrifice = player->GetItemByPos(bag, slot);
+                    if (itemSacrifice && itemSacrifice != itemMain && itemSacrifice->GetTemplate() == templateMain)
+                    {
+                        itemMain->ModLvlBonus(5 + itemSacrifice->GetLvlBonus() / 2);
+                        player->DestroyItem(itemSacrifice->GetBagSlot(), itemSacrifice->GetSlot(), true);
+                    }
                 }
+                Eluna::Push(L, itemMain->GetLvlBonus());
+                Eluna::Push(L, itemMain->GetGUID().GetCounter());
+                return 2;
             }
-            return 1;
+        }
+        return 0;
+    }
+    int GetBonusILVL(lua_State* L, Player* player)
+    {
+        uint32 itemId = Eluna::CHECKVAL<int>(L, 2, true);
+        if (itemId)
+        {
+            Eluna::Push(L, player->GetItemByGuidCounter(itemId)->GetLvlBonus());
+            Eluna::Push(L, itemId);
+            return 2;
         }
         return 0;
     }
