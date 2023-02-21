@@ -462,6 +462,7 @@ ElunaRegister<Player> PlayerMethods[] =
     { "GetRuneState", &LuaELK::GetRuneState },
     { "WarforgeItems", &LuaELK::WarforgeItems },
     { "GetBonusILVL", &LuaELK::GetBonusILVL },
+    { "EPress", &LuaELK::EPress },
 
     // Getters
     { "GetSelection", &LuaPlayer::GetSelection },

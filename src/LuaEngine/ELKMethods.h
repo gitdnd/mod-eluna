@@ -72,6 +72,9 @@ namespace LuaELK
             if (itemMain->GetLvlBonus() >= 300)
                 return 0;
             ItemTemplate const* templateMain = itemMain->GetTemplate();
+            uint8 rarity = templateMain->Quality;
+            if (rarity != ITEM_QUALITY_UNCOMMON || rarity != ITEM_QUALITY_RARE || rarity != ITEM_QUALITY_EPIC)
+                return 0;
             if (templateMain->Class == ITEM_CLASS_ARMOR || templateMain->Class == ITEM_CLASS_WEAPON)
             {
                 for (uint8 i = 1; i <= 3; i++)
@@ -105,6 +108,30 @@ namespace LuaELK
             Eluna::Push(L, player->GetItemByGuidCounter(itemId)->GetLvlBonus());
             Eluna::Push(L, itemId);
             return 2;
+        }
+        return 0;
+    }
+    int EPress(lua_State* L, Player* player)
+    {
+
+        GameObject* go = nullptr;
+        Acore::NearestGameObjectCheck checker(*player, 5.0f);
+        Acore::GameObjectLastSearcher<Acore::NearestGameObjectCheck> searcher(player, go, checker);
+        Cell::VisitGridObjects(player, searcher, 5.0f);
+        if (go)
+        {
+            if (go->GetGoType() == GAMEOBJECT_TYPE_MAILBOX)
+            {
+                player->GetSession()->GetMailbox();
+                return 0;
+            }
+            SpellInfo const* spell = go->GetSpellForLock(player);
+            if (spell)
+            {
+                player->CastSpell(go, spell->Id, false);
+            }
+            else
+                go->Use(player);
         }
         return 0;
     }
