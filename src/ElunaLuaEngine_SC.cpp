@@ -772,6 +772,25 @@ public:
         return sEluna->OnCanJoinLfg(player, roles, dungeons, comment);
     }
     
+    void OnQuestRewardItem(Player* player, Item* item, uint32 count) override
+    {
+        sEluna->OnQuestRewardItem(player, item, count);
+    }
+
+    void OnCreateItem(Player* player, Item* item, uint32 count) override
+    {
+        sEluna->OnCreateItem(player, item, count);
+    }
+
+    void OnStoreNewItem(Player* player, Item* item, uint32 count) override
+    {
+        sEluna->OnStoreNewItem(player, item, count);
+    }
+
+    void OnPlayerCompleteQuest(Player* player, Quest const* quest) override
+    {
+        sEluna->OnPlayerCompleteQuest(player, quest);
+    }
     ////////////////
     // MINE
     ////////////////
@@ -780,6 +799,7 @@ public:
         sEluna->OnRuneResync(player);
     }
     
+
 };
 
 class Eluna_ServerScript : public ServerScript
